@@ -2,7 +2,7 @@
 Final project for data structures and algorithms
 
 
-![assignmentDetail1](./queueProj/assignmentDetails/queue-1.png)
+![assignmentDetail1](./assignmentDetails/queue-1.png)
 
-![assignmentDetail2](./queueProj/assignmentDetails/queue-2.png)
+![assignmentDetail2](./assignmentDetails/queue-2.png)
 
