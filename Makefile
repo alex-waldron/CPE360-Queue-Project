@@ -8,4 +8,4 @@ Store.o: Store.cpp Store.h
 Queue.o: Queue.cpp Queue.h
 	g++ -c Queue.cpp
 clean:
-	rm *.o a.out
+	rm *.o a.out output
