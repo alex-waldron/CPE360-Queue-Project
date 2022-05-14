@@ -3,11 +3,13 @@
 
 class Customer{
     public:
-        int arriveTime;
-        int departTime;
+        int waitTime;
         int orderTime;
+        int remainingOrderTime;
         Customer *next;
-
+        void decreaseRemainingOrderTimeBy(int seconds);
+        void increaseWaitTimeBy(int seconds);
+        bool isOrderComplete();
         Customer();
 };
 
@@ -18,7 +20,9 @@ class Queue{
         
         Queue();
         void enqueue();
-
-        void dequeue();
+        int length();
+        Customer *dequeue();
+        Customer *getHead();
+        void increaseCustomerWaitTimes();
 };
 #endif //QUEUE_H
