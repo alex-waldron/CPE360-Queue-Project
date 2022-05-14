@@ -66,17 +66,33 @@ int main(){
 
     while(TIME < OPEN_MINUTES){
         //1 - should we add a new customer
+        storeClock++;
 
-        
         if(TIME <= TEN_AM ){
             //8 am through 10 am
             randNum = rand() % 100 ;
             if(randNum < 30){
-
+                cout << "At time: " << storeClock << " we have 1 new customer" << endl;
+                customerCount++;
+                queue_length++;
+                myStore.enqueue();
             }
+            else{
+                cout << "At time: " << storeClock << " no new customer arrived " << endl;
+            }
+
         }
+    }
         //2. is the customer going to place an order at this minute
         int orderTime = rand() % 6;
-        //3. is a customer ready to depart the store at this minute? 
+        //3. is a customer ready to depart the store at this minute?
+    if(myStore.head != NULL){
+        if(myStore.head->orderTime == 0){
+            cout << "Customer departing" << endl;
+            myStore.dequeue();
+        }
+        else
+            myStore.head->orderTime--;
+    }
     }
 }
