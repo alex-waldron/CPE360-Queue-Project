@@ -1,117 +1,77 @@
 #include<iostream>
-#include<random>
 
+#include "Store.h"
 using namespace std;
 
-
-class Customer{
-    public:
-        int arriveTime;
-        int departTime;
-        int orderTime;
-        Customer *next;
-
-        Customer(){
-            arriveTime = storeClock;
-            departTime = 0;
-            //waitTime = 0;
-            orderTime = rand()%6 + 1;
-            next = NULL;
-
-        }
-};
-
-class Queue{
-    public:
-        Customer *head;
-        Queue(){
-            head = NULL;
-
-        }    
-        void enqueue(int arriveTime, int orderTime){
-            Customer *temp = new Customer();
-            //code for enqueue, add this customer to Queue
-            cout << "Just added a new customer to line: "<< temp->inTime << " and order: " << temp->orderTime << endl;
-
-            if(head == NULL){
-                head = temp;
-            }
-            else{
-                Customer *another;
-                another = head; //start at the beginning
-                while(another->next != NULL){
-                    another = another->next;
-                }
-                //when we are at the end, we want to make this new chunk(temp0 the last one
-                another->next = temp;
-                temp->next = NULL;
-            }
-        }
-
-    void dequeue() {
-        if (head == NULL) {
-            cout << "Empty queue, nothing to delete" << endl;
-        } else {
-            Customer *temp;
-            temp = head; //grab the addr of the first custpmer -- we want to delete this
-            head = head->next; //head moves to the next customer
-            cout << "At this time: " << storeClock << " we have a departing customer" << endl;
-            delete temp;
-        }
-
-    }
-};
-
-
 int main(){
-    int TIME = 0;
-    int guess,randNum, count = 0;
-    const int OPEN_MINUTES = 1020;
-    const int TEN_AM = 120;
-    const int ELEVEN_AM = 210; //1130am
     srand(time(NULL));
+    Store *myStore = new Store();
 
-    while(TIME < OPEN_MINUTES){
-        //1 - should we add a new customer
-        storeClock++;
+    while(myStore->isOpen()){
+        if (myStore->hasNewCustomer()){
 
-        if(TIME <= TEN_AM ){
-            //8 am through 10 am
-            randNum = rand() % 100 ;
-            if(randNum < 30){
-                cout << "At time: " << storeClock << " we have 1 new customer" << endl;
-                customerCount++;
-                queue_length++;
-                myStore.enqueue();
-            }
-            else{
-                cout << "At time: " << storeClock << " no new customer arrived " << endl;
-            }
+            myStore->addCustomerToLine();
 
         }
-        //brunch time customers
-        else if(storeClock > TEN_AM && storeClock <= ELEVEN_AM){
-            random_number = rand()%100 + 1;
-            if(random_number <= 10){
-                cout << "At time: " << storeClock << " we have 1 new customer" << endl;
-                customerCount++;
-                queue_length++;
-                myStore.enqueue();
-            }
-            else{
-                cout << "At time " << storeClock << " no new customer arrived" << endl;
-            }
-        }
+
+        myStore->workOnOrder();
+
+        myStore->removeCompletedOrders();
+
+        myStore->prepareForNextMinute();
+        
     }
-        //2. is the customer going to place an order at this minute
-        int orderTime = rand() % 6;
-        //3. is a customer ready to depart the store at this minute?
-    if(myStore.head != NULL){
-        if(myStore.head->orderTime == 0){
-            cout << "Customer departing" << endl;
-            myStore.dequeue();
-        }
-        else
-            myStore.head->orderTime--;
-    }
+    
 }
+
+// const int TEN_AM = 120;
+//const int ELEVEN_AM = 210; //1130am
+    //     if(TIME <= TEN_AM ){
+    //         //8 am through 10 am
+    //         randNum = rand() % 100 ;
+    //         if(randNum < 30){
+    //             cout << "At time: " << storeClock << " we have 1 new customer" << endl;
+    //             customerCount++;
+    //             queue_length++;
+    //             myStore.enqueue();
+    //         }
+    //         else{
+    //             cout << "At time: " << storeClock << " no new customer arrived " << endl;
+    //         }
+
+    //     }
+    //     //brunch time customers
+    //     else if(storeClock > TEN_AM && storeClock <= ELEVEN_AM){
+    //         random_number = rand()%100 + 1;
+    //         if(random_number <= 10){
+    //             cout << "At time: " << storeClock << " we have 1 new customer" << endl;
+    //             customerCount++;
+    //             queue_length++;
+    //             myStore.enqueue();
+    //         }
+    //         else{
+    //             cout << "At time " << storeClock << " no new customer arrived" << endl;
+    //         }
+    //     }
+    // }
+    //     //2. is the customer going to place an order at this minute
+    //     int orderTime = rand() % 6;
+    //     //3. is a customer ready to depart the store at this minute?
+    // if(myStore.head != NULL){
+    //     if(myStore.head->orderTime == 0){
+    //         cout << "Customer departing" << endl;
+    //         myStore.dequeue();
+    //     }
+    //     else
+    //         myStore.head->orderTime--;
+    // }
+
+
+// int main(){
+//     Store *myStore = new Store();
+    
+//     while(myStore->isOpen()){
+        
+//         myStore->prepareForNextMinute();
+//     }
+// }
