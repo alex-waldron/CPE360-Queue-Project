@@ -1,4 +1,4 @@
-# CPE555-Queue-Project
+# CPE365-Queue-Project
 Final project for data structures and algorithms
 
 ### How to run
