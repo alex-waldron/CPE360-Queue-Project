@@ -68,6 +68,7 @@ int main(){
     int guess,randNum, count = 0;
     const int OPEN_MINUTES = 1020;
     const int TEN_AM = 120;
+    const int ELEVEN_AM = 210; //1130am
     srand(time(NULL));
 
     while(TIME < OPEN_MINUTES){
@@ -87,6 +88,19 @@ int main(){
                 cout << "At time: " << storeClock << " no new customer arrived " << endl;
             }
 
+        }
+        //brunch time customers
+        else if(storeClock > TEN_AM && storeClock <= ELEVEN_AM){
+            random_number = rand()%100 + 1;
+            if(random_number <= 10){
+                cout << "At time: " << storeClock << " we have 1 new customer" << endl;
+                customerCount++;
+                queue_length++;
+                myStore.enqueue();
+            }
+            else{
+                cout << "At time " << storeClock << " no new customer arrived" << endl;
+            }
         }
     }
         //2. is the customer going to place an order at this minute
