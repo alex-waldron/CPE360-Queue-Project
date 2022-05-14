@@ -9,6 +9,16 @@ class Customer{
         int arriveTime;
         int departTime;
         int orderTime;
+        Customer *next;
+
+        Customer(){
+            arriveTime = storeClock;
+            departTime = 0;
+            //waitTime = 0;
+            orderTime = rand()%6 + 1;
+            next = NULL;
+
+        }
 };
 
 class Queue{
@@ -49,10 +59,6 @@ class Queue{
             delete temp;
         }
 
-        int queSize() {
-            return 1;
-
-        }
     }
 };
 
