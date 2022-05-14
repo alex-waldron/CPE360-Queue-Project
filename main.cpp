@@ -38,11 +38,10 @@ class Queue{
             }
         }
 
-    void dequeue(){
-        if(head == NULL){
+    void dequeue() {
+        if (head == NULL) {
             cout << "Empty queue, nothing to delete" << endl;
-        }
-        else{
+        } else {
             Customer *temp;
             temp = head; //grab the addr of the first custpmer -- we want to delete this
             head = head->next; //head moves to the next customer
@@ -50,10 +49,11 @@ class Queue{
             delete temp;
         }
 
-        int queSize(){
+        int queSize() {
             return 1;
 
         }
+    }
 };
 
 
@@ -93,6 +93,5 @@ int main(){
         }
         else
             myStore.head->orderTime--;
-    }
     }
 }
