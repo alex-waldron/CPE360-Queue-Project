@@ -221,13 +221,13 @@ void Metric::updateWithTimeStampedVal(TimeStampedValue timeVal){
 std::string Metric::getSummary(){
     std::string maxString = "Max of ";
     maxString += std::to_string(max.value);
-    maxString +=  " occured at time ";
+    maxString +=  " occurred at time ";
     maxString += std::to_string(max.time);
     maxString += " minutes\n";
 
     std::string minString = "Min of ";
     minString += std::to_string(min.value);
-    minString +=  " occured at time ";
+    minString +=  " occurred at time ";
     minString += std::to_string(min.time);
     minString += " minutes\n";
 
