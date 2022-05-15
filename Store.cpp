@@ -58,10 +58,10 @@ void Store::updateCustomerMetrics(Customer *customer){
 }
 
 void Store::printSummaryOfMetrics(){
-    cout << "\nCustomer Wait Time Metrics: \n\n" << storeMetrics->customerWaitTime->getSummary() << "\n\n\n";
-    cout << "Customer Service Time Metrics: \n\n" << storeMetrics->customerServiceTime->getSummary() << "\n\n\n";
+    cout << "\nCustomer Wait Time Metrics: \n\n" << storeMetrics->customerWaitTime->getSummary() << "\n\n";
+    cout << "Customer Service Time Metrics: \n\n" << storeMetrics->customerServiceTime->getSummary() << "\n\n";
     for(int i = 0 ; i < queueCount; i++){
-        cout << "Queue " << i <<" Length Metrics: \n\n" << storeMetrics->queueLengths[i]->getSummary() << "\n\n\n";
+        cout << "Queue " << i <<" Length Metrics: \n\n" << storeMetrics->queueLengths[i]->getSummary() << "\n\n";
     }
     
 }
@@ -121,6 +121,30 @@ bool Store::hasNewCustomer(){
 
 void Store::moveCustomersFromQueueToServer(){
     // TODO - move from the queues to the server
+    if (queueCount == serverCount){
+        //for each index i, queue[i] must go to server[i]
+        for(int i = 0; i < queueCount; i++){
+            Queue *queue = storeLines[i];
+            Server *server = servers[i];
+            if (!server->hasCustomer()){
+                server->customerBeingServed = queue->dequeue();
+            }
+        }
+    } else{
+        //each queue can move to any server
+        for(int i=0; i < queueCount; i++){
+            Queue *queue = storeLines[i];
+            if (!queue->isEmpty()){
+                for(int j = 0; j < serverCount; j++){
+                    Server *server = servers[j];
+                    if (!server->hasCustomer()){
+                        server->customerBeingServed = queue->dequeue();
+                        
+                    }
+                }
+            }
+        }
+    }
 }
 
 int StoreTime::getArrivalProbability(){

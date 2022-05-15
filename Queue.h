@@ -24,5 +24,6 @@ class Queue{
         Customer *dequeue();
         Customer *getHead();
         void increaseCustomerWaitTimes();
+        bool isEmpty();
 };
 #endif //QUEUE_H

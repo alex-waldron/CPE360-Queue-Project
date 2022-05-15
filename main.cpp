@@ -3,28 +3,43 @@
 #include "Store.h"
 using namespace std;
 
-int main(){
-    srand(time(NULL));
-    Store *myStore = new Store(1,1);
 
-    while(myStore->isOpen()){
-        if (myStore->hasNewCustomer()){
+
+void runSimulationForStore(Store *store){
+    
+    while(store->isOpen()){
+        if (store->hasNewCustomer()){
             
-            myStore->addCustomerToLine();
+            store->addCustomerToLine();
             
         }
         
-        myStore->moveCustomersFromQueueToServer();
+        store->moveCustomersFromQueueToServer();
 
-        myStore->workOnOrders();
+        store->workOnOrders();
         
-        myStore->removeCompletedOrders();
+        store->removeCompletedOrders();
 
-        myStore->updateQueueMetric();
+        store->updateQueueMetric();
 
-        myStore->incrementTime();
+        store->incrementTime();
         
     }
-    myStore->printSummaryOfMetrics();
-    
+    store->printSummaryOfMetrics();
+}
+
+
+int main(){
+    srand(time(NULL));
+    Store *originalStore = new Store(1,1);
+    cout << "\nOne Server One Queue Metrics: \n" << endl; 
+    runSimulationForStore(originalStore);
+
+    Store *twoServerTwoQueueStore = new Store(2,2);
+    cout << "\nTwo Server Two Queues Metrics: \n" << endl;
+    runSimulationForStore(twoServerTwoQueueStore);
+
+    Store *twoServerOneQueueStore = new Store(2,1);
+    cout << "\nTwo Server One Queue Metrics: \n" <<endl;
+    runSimulationForStore(twoServerOneQueueStore);
 }

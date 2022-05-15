@@ -65,6 +65,9 @@ int Queue::length(){
     }
     return counter;
 }
+bool Queue::isEmpty(){
+    return head == NULL;
+}
 
 Customer *Queue::dequeue(){
         if (head == NULL) {
