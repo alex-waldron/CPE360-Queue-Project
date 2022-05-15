@@ -21,11 +21,21 @@ class Metric{
 };
 
 class StoreMetrics{
+    private:
+        int queueCount;
+        int serverCount;
     public:
         Metric *customerWaitTime;
         Metric *customerServiceTime;
-        Metric *queueLength;
-        StoreMetrics();
+        Metric *queueLengths[10];
+        StoreMetrics(int numQueues);
+};
+
+class Server{
+    public:
+        Customer *customerBeingServed;
+        Server();
+        bool hasCustomer();
 };
 
 class StoreTime{
@@ -46,22 +56,25 @@ class StoreTime{
 class Store{
     private:
         StoreTime *storeTime;
-        
+        int serverCount;
+        int queueCount;
         
         
     public:
-        Queue *storeLine;
+        Queue *storeLines[10];
+        Server *servers[10];
         StoreMetrics *storeMetrics;
-        Store();
+        Store(int numServer, int numQueues);
         bool isOpen();
         void incrementTime();
         void removeCompletedOrders();
         bool hasNewCustomer();
         void addCustomerToLine();
-        void workOnOrder();
+        void workOnOrders();
         void updateQueueMetric();
         void updateCustomerMetrics(Customer *customer);
         void printSummaryOfMetrics();
+        void moveCustomersFromQueueToServer();
 };
 
 
