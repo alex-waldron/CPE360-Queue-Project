@@ -3,10 +3,20 @@
 #include <random>
 #include <iostream>
 using namespace std;
-Store::Store(){
+Store::Store(int numServers, int numQueues){
+    
     storeTime = new StoreTime();
-    storeLine = new Queue();
-    storeMetrics = new StoreMetrics();
+
+    serverCount = numServers;
+    for(int i = 0; i < numServers; i++){
+        servers[i] = new Server();
+    }
+    queueCount = numQueues;
+    for(int i = 0; i < numQueues ; i++){
+        storeLines[i] = new Queue();
+    }
+    
+    storeMetrics = new StoreMetrics(numQueues);
 }
 
 bool Store::isOpen(){
@@ -14,14 +24,17 @@ bool Store::isOpen(){
 }
 
 void Store::updateQueueMetric(){
-    int currentQueueLength = storeLine->length();
-    int currentTime = storeTime->currentTime;
+    for (int i = 0; i < queueCount; i++){
+        Queue *storeLine = storeLines[i];
+        int currentQueueLength = storeLine->length();
+        int currentTime = storeTime->currentTime;
 
-    TimeStampedValue queueLengthValue;
-    queueLengthValue.value = currentQueueLength;
-    queueLengthValue.time = currentTime;
-
-    storeMetrics->queueLength->updateWithTimeStampedVal(queueLengthValue);
+        TimeStampedValue queueLengthValue;
+        queueLengthValue.value = currentQueueLength;
+        queueLengthValue.time = currentTime;
+        Metric *queueLengthMetric = storeMetrics->queueLengths[i];
+        queueLengthMetric->updateWithTimeStampedVal(queueLengthValue);
+    }
 }
 
 void Store::updateCustomerMetrics(Customer *customer){
@@ -47,33 +60,54 @@ void Store::updateCustomerMetrics(Customer *customer){
 void Store::printSummaryOfMetrics(){
     cout << "\nCustomer Wait Time Metrics: \n\n" << storeMetrics->customerWaitTime->getSummary() << "\n\n\n";
     cout << "Customer Service Time Metrics: \n\n" << storeMetrics->customerServiceTime->getSummary() << "\n\n\n";
-    cout << "Queue Length Metrics: \n\n" << storeMetrics->queueLength->getSummary() << "\n\n\n";
+    for(int i = 0 ; i < queueCount; i++){
+        cout << "Queue " << i <<" Length Metrics: \n\n" << storeMetrics->queueLengths[i]->getSummary() << "\n\n\n";
+    }
+    
 }
 
 void Store::incrementTime(){
-    storeLine->increaseCustomerWaitTimes();
+    for(int i = 0; i < queueCount; i++){
+        Queue *storeLine = storeLines[i];
+        storeLine->increaseCustomerWaitTimes();
+    }
     storeTime->increaseTime();
 }
 
 void Store::removeCompletedOrders(){
-    Customer *orderInProgress = storeLine->getHead();
-    if ((orderInProgress != NULL) && (orderInProgress->isOrderComplete())){
-        Customer *completedOrder = storeLine->dequeue();
-        updateCustomerMetrics(completedOrder);
-        delete completedOrder;
+    for (int i = 0; i < serverCount; i++){
+        Server *server = servers[i];
+        Customer *orderInProgress = server->customerBeingServed;
+        if ((orderInProgress != NULL) && (orderInProgress->isOrderComplete())){
+            
+            updateCustomerMetrics(orderInProgress);
+            server->customerBeingServed = NULL;
+            delete orderInProgress;
+        }
     }
 }
 
-void Store::workOnOrder(){
-    Customer *orderInProgress = storeLine->getHead();
-    if (orderInProgress != NULL){
-        orderInProgress->decreaseRemainingOrderTimeBy(1);
+void Store::workOnOrders(){
+    for(int i = 0; i < serverCount; i++){
+        Server *currentServer = servers[i];
+        if (currentServer->hasCustomer()){
+            currentServer->customerBeingServed->decreaseRemainingOrderTimeBy(1);
+        }
     }
 }
 
 void Store::addCustomerToLine(){
-    
-    storeLine->enqueue();
+    Queue *shortestQueue = NULL;
+    for (int i = 0; i < queueCount; i++){
+        Queue *queue = storeLines[i];
+        if (shortestQueue == NULL){
+            shortestQueue = queue;
+        }else{
+            shortestQueue = shortestQueue->length() < queue->length() ? shortestQueue : queue;
+
+        }
+    }
+    shortestQueue->enqueue();
 
 }
 
@@ -83,6 +117,10 @@ bool Store::hasNewCustomer(){
     int randNum = rand() % 100 ;
     
     return randNum < arrivalProbability;
+}
+
+void Store::moveCustomersFromQueueToServer(){
+    // TODO - move from the queues to the server
 }
 
 int StoreTime::getArrivalProbability(){
@@ -123,10 +161,14 @@ bool StoreTime::isTimeValid(){
 }
 
 
-StoreMetrics::StoreMetrics(){
+StoreMetrics::StoreMetrics(int numQueues){
     customerWaitTime = new Metric();
     customerServiceTime = new Metric();
-    queueLength = new Metric();
+
+    for (int i = 0; i < numQueues; i++){
+        queueLengths[i] = new Metric();
+    }
+    
 }
 
 Metric::Metric(){
@@ -172,3 +214,9 @@ std::string Metric::getSummary(){
     return avgString + minString + maxString;
 }
 
+Server::Server(){
+    customerBeingServed = NULL;
+}
+bool Server::hasCustomer(){
+    return customerBeingServed != NULL;
+}

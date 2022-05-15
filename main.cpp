@@ -5,7 +5,7 @@ using namespace std;
 
 int main(){
     srand(time(NULL));
-    Store *myStore = new Store();
+    Store *myStore = new Store(1,1);
 
     while(myStore->isOpen()){
         if (myStore->hasNewCustomer()){
@@ -13,11 +13,13 @@ int main(){
             myStore->addCustomerToLine();
             
         }
+        
+        myStore->moveCustomersFromQueueToServer();
 
-        myStore->workOnOrder();
+        myStore->workOnOrders();
         
         myStore->removeCompletedOrders();
-        
+
         myStore->updateQueueMetric();
 
         myStore->incrementTime();
